@@ -56,7 +56,14 @@ func is_down() -> bool:
 
 func _respawn() -> void:
 	# Muerte → entrada del mapa, sin pérdida salvo progreso de oleada.
-	var sp := get_tree().current_scene.get_node_or_null("SpawnPoint") as Node3D
+	var sp: Node3D = null
+	var scene := get_tree().current_scene
+	if scene != null:
+		sp = scene.get_node_or_null("SpawnPoint") as Node3D
+	if sp == null:
+		sp = get_tree().get_first_node_in_group("spawn_point") as Node3D
+	if sp == null and get_parent() != null:
+		sp = get_parent().get_node_or_null("SpawnPoint") as Node3D
 	if sp != null:
 		global_position = sp.global_position
 	velocity = Vector3.ZERO

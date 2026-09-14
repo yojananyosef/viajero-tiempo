@@ -26,8 +26,12 @@ func _ready() -> void:
 	_darken($Model)
 	_label = $NameLabel
 	_quest = get_tree().get_first_node_in_group("quest_Q03")
-	if _quest != null and _quest.has_signal("quest_changed"):
-		_quest.quest_changed.connect(_on_quest_changed)
+	if _quest != null:
+		if _quest.has_signal("quest_changed"):
+			_quest.quest_changed.connect(_on_quest_changed)
+		if _quest.has_signal("progress_changed"):
+			_quest.progress_changed.connect(_on_quest_progress)
+		_try_awaken()
 	_update_sleep_visual()
 	_setup_replication()
 
@@ -98,6 +102,16 @@ func _die() -> void:
 
 
 func _on_quest_changed(_s: StringName) -> void:
+	_try_awaken()
+
+
+func _on_quest_progress(_done: int, _total: int) -> void:
+	# register_task emite progress_changed por sello (quest_changed solo en
+	# transiciones); sin esto el tentador jamás despertaba a los 3 sellos.
+	_try_awaken()
+
+
+func _try_awaken() -> void:
 	# Despierta al sellar los 3 susurros (done_count >= 3).
 	if not awakened and _quest != null and _quest.done_count >= 3:
 		awaken()
