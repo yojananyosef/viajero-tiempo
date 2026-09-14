@@ -1,0 +1,41 @@
+; Engine configuration file.
+; Viaje del Viajero — MMORPG bíblico por instancias (Godot 4.7.2, GDScript)
+; Estilo visual: referencia FlyFF solo como guía (cute, brillante, low-poly).
+; Lore: 100% bíblico, viajero llamado por Dios a restaurar el canon.
+
+config_version=5
+
+[application]
+
+config/name="Viajero del Tiempo — Restaurador del Canon"
+config/description="MMORPG por instancias 8-20p. Expansión 1: caps 1-10 tal cual, sin saltos."
+run/main_scene="res://scenes/maps/Map_01_Origen.tscn"
+config/features=PackedStringArray("4.7", "Forward Plus")
+boot_splash/bg_color=Color(0.05, 0.06, 0.1, 1)
+
+[autoload]
+
+; Se activan en SPEC-001/002 cuando existan los scripts:
+; GameState="*res://scripts/core/game_state.gd"
+; Net="*res://scripts/core/net.gd"
+; Save="*res://scripts/core/save.gd"
+; TimeLine="*res://scripts/core/timeline.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[network]
+
+; ENet por defecto. Servidor autoritativo. Instancias 8-20p.
+; Ver openspec ADR-001.
+
+[rendering]
+
+renderer/rendering_method="forward_plus"
+renderer/rendering_method.mobile="forward_plus"
+textures/vram_compression/import_etc2_astc=true
+environment/defaults/default_clear_color=Color(0.05, 0.06, 0.1, 1)
