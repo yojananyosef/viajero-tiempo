@@ -15,10 +15,11 @@ boot_splash/bg_color=Color(0.05, 0.06, 0.1, 1)
 
 [autoload]
 
-; Se activan cuando existan los scripts (SPEC-002 crea save.gd):
+Save="*res://scripts/core/save.gd"
+
+; Futuros (GameState/Net/TimeLine) en sus specs:
 ; GameState="*res://scripts/core/game_state.gd"
 ; Net="*res://scripts/core/net.gd"
-; Save="*res://scripts/core/save.gd"
 ; TimeLine="*res://scripts/core/timeline.gd"
 
 [display]

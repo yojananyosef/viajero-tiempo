@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://viajero_map01_origen"]
+[gd_scene load_steps=8 format=3 uid="uid://viajero_map01_origen"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/Traveler.tscn" id="1"]
+[ext_resource type="Script" path="res://scripts/gameplay/map_origen.gd" id="2"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat_1"]
 sky_top_color = Color(0.35, 0.55, 0.9, 1)
@@ -23,6 +24,7 @@ size = Vector2(60, 60)
 size = Vector3(60, 1, 60)
 
 [node name="Map_01_Origen" type="Node3D"]
+script = ExtResource("2")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 10, 0)

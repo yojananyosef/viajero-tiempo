@@ -18,7 +18,7 @@ material = SubResource("TunicMat")
 radius = 0.4
 height = 1.7
 
-[node name="Traveler" type="CharacterBody3D"]
+[node name="Traveler" type="CharacterBody3D" groups=["player"]]
 collision_layer = 2
 collision_mask = 1
 script = ExtResource("1")
