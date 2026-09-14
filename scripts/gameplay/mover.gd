@@ -19,6 +19,7 @@ var anim_state: StringName = &"idle"
 var _coyote: float = 0.0
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
 var _net: Node = null
+var _save: Node = null
 
 @onready var _visual: MeshInstance3D = $Visual
 @onready var _rig: SpringArm3D = $CameraRig
@@ -26,11 +27,16 @@ var _net: Node = null
 
 func _ready() -> void:
 	_net = get_node_or_null("/root/Net")
+	_save = get_node_or_null("/root/Save")
 	_setup_replication()
 
 
 func online() -> bool:
-	return multiplayer.multiplayer_peer != null
+	# Fuente canónica: Net.online() (excluye el OfflineMultiplayerPeer).
+	if _net != null and _net.has_method("online"):
+		return bool(_net.call("online"))
+	var mp := multiplayer.multiplayer_peer
+	return mp != null and not (mp is OfflineMultiplayerPeer)
 
 
 ## Peer dueño del avatar (nombre determinista = peer_id en red, 0 en solo).
@@ -87,6 +93,11 @@ func _physics_process(delta: float) -> void:
 		_coyote = 0.0
 
 	var speed: float = run_speed if sprinting else walk_speed
+	# SPEC-004: bendición del Guía (buff del hub, +15% velocidad).
+	if _save != null:
+		var st: Dictionary = _save.get("state") as Dictionary
+		if st != null and bool((st.get("flags", {}) as Dictionary).get("bendicion_guia", false)):
+			speed *= 1.15
 	var target := Vector3(dir.x * speed, velocity.y, dir.z * speed)
 	velocity.x = move_toward(velocity.x, target.x, acceleration * delta)
 	velocity.z = move_toward(velocity.z, target.z, acceleration * delta)

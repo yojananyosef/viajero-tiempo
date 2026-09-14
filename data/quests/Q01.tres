@@ -1,0 +1,14 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/quest_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+quest_id = "Q01"
+title = "El origen del mal"
+chapter = 1
+unlock_chapter = 2
+npc_name = "Enoc, el Mayor"
+dialogue = Array[String](["Viajero. El Vacío aún no tiene forma... pero el contador final ya corre.", "El enemigo activó su máquina y envió a sus secuaces a romper el canon.", "Dios te llama: camina cada capítulo y restaura lo que debe ocurrir.", "Recibe el Sello del Restaurador y mi bendición. Cruza la Columna de Luz."])
+seal_flag = "q01_sello"
+blessing_flag = "bendicion_guia"

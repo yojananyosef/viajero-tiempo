@@ -26,7 +26,10 @@ func _ready() -> void:
 
 
 func online() -> bool:
-	return multiplayer.multiplayer_peer != null
+	# OJO: Godot 4 deja un OfflineMultiplayerPeer por defecto; solo hay red
+	# real con un ENetMultiplayerPeer (u otro peer con red).
+	var mp := multiplayer.multiplayer_peer
+	return mp != null and not (mp is OfflineMultiplayerPeer)
 
 
 func is_server() -> bool:

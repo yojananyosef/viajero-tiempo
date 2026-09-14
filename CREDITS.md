@@ -5,11 +5,15 @@ Regla: ningún asset entra a `assets_3p/` sin fila aquí.
 ## Kenney (CC0 — dominio público, sin atribución requerida)
 Fuente: https://kenney.nl/assets — licencia CC0 por pack.
 - [ ] Fantasy Town Kit — base campamento patriarcal / Babel (pendiente descarga)
-- [ ] Mini Characters — base viajero/mobs cute (pendiente)
+- [x] Mini Characters — base viajero/mobs cute (descargado 2026-09-14, CC0).
+  Usado en SPEC-004 Q01: `assets_3p/kenney/models/character-male-a.glb` (Guía Enoc).
+  Zips fuente (no commiteados,Ignored por .gitignore): re-descargables desde URLs arriba.
 - [ ] Blocky Characters — variantes (pendiente)
 - [ ] Nature Kit / Mini Forest — Edén, Canaán, Ararat (pendiente)
 - [ ] Modular Dungeon / Cave Kit — Arca interior, Sinaí, Babel interior (pendiente)
-- [ ] Platformer Kit — islas fragmentadas por anomalías (pendiente)
+- [x] Platformer Kit — islas fragmentadas por anomalías (descargado 2026-09-14, CC0).
+  Usados en SPEC-004 Q01: `assets_3p/kenney/models/platform.glb` (dais del portal),
+  `brick.glb` (pilares), `jewel.glb` (sello flotante).
 
 ## itch.io free/tag-godot (verificar cada pack: CC0 o CC-BY)
 Fuente: https://itch.io/game-assets/free/tag-godot

@@ -1,8 +1,13 @@
-[gd_scene load_steps=9 format=3 uid="uid://viajero_map01_origen"]
+[gd_scene load_steps=14 format=3 uid="uid://viajero_map01_origen"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/Traveler.tscn" id="1"]
 [ext_resource type="Script" path="res://scripts/gameplay/map_origen.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/net/spawner.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/gameplay/quest.gd" id="4"]
+[ext_resource type="Resource" path="res://data/quests/Q01.tres" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/npc/Guide.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/maps/Portal.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/npc/Echo.tscn" id="8"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat_1"]
 sky_top_color = Color(0.35, 0.55, 0.9, 1)
@@ -46,6 +51,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
 [node name="Spawner" type="MultiplayerSpawner" parent="Net"]
 script = ExtResource("3")
+
+[node name="Q01" type="Node" parent="."]
+script = ExtResource("4")
+data = ExtResource("5")
+
+[node name="Guide" parent="." instance=ExtResource("6")]
+transform = Transform3D(-0.443, 0, -0.896, 0, 1, 0, 0.896, 0, -0.443, 4, 0.5, 2)
+
+[node name="PortalSeal" parent="." instance=ExtResource("7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.5, -5)
+
+[node name="Echo" parent="." instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -9)
 
 [node name="Ground" type="StaticBody3D" parent="."]
 
