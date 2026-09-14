@@ -15,7 +15,7 @@ func _ready() -> void:
 	_prompt_label = $PromptLabel
 	_dialogue_label.visible = false
 	_prompt_label.visible = false
-	_quest = get_tree().get_first_node_in_group("q01")
+	_quest = get_tree().get_first_node_in_group("quest_Q01")
 	if _quest != null and _quest.has_signal("quest_changed"):
 		_quest.quest_changed.connect(_on_quest_changed)
 	_refresh_labels()

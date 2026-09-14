@@ -22,7 +22,7 @@ func _ready() -> void:
 			_beams.push_back(b)
 	_mat_dim = _beam_material(Color(0.3, 0.45, 0.7), 0.4)
 	_mat_lit = _beam_material(Color(1.0, 0.8, 0.35), 2.5)
-	_quest = get_tree().get_first_node_in_group("q01")
+	_quest = get_tree().get_first_node_in_group("quest_Q01")
 	if _quest != null and _quest.has_signal("quest_changed"):
 		_quest.quest_changed.connect(_on_quest_changed)
 	_apply_visual()
@@ -63,7 +63,22 @@ func _on_body_entered(body: Node3D) -> void:
 		return
 	if _quest != null and _quest.state == &"done":
 		if _quest.restore():
-			_state_label.text = "Capítulo 2 desbloqueado. El camino al Edén se abrirá."
+			_state_label.text = "Capítulo 2 desbloqueado. Cruza para viajar al Edén."
+	elif _quest != null and _quest.state == &"restored" and travel_scene != "":
+		_travel()
+
+
+## Viaje a otro mapa (solo / servidor; los clientes siguen al host en specs
+## de viaje posteriores). Se difiere por venir de callback de física.
+@export var travel_scene: String = ""
+
+
+func _travel() -> void:
+	var save := get_node_or_null("/root/Save")
+	if save != null:
+		(save.get("state") as Dictionary)["map"] = "map_02"
+		save.save_game()
+	get_tree().call_deferred("change_scene_to_file", travel_scene)
 
 
 func _authoritative() -> bool:

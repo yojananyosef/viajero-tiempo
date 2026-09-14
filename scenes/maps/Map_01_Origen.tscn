@@ -61,6 +61,7 @@ transform = Transform3D(-0.443, 0, -0.896, 0, 1, 0, 0.896, 0, -0.443, 4, 0.5, 2)
 
 [node name="PortalSeal" parent="." instance=ExtResource("7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.5, -5)
+travel_scene = "res://scenes/maps/Map_02_Creacion.tscn"
 
 [node name="Echo" parent="." instance=ExtResource("8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -9)

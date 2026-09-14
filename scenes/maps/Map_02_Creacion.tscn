@@ -1,0 +1,209 @@
+[gd_scene load_steps=25 format=3 uid="uid://viajero_map02_eden"]
+
+[ext_resource type="Script" path="res://scripts/gameplay/map_creacion.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/gameplay/quest.gd" id="2"]
+[ext_resource type="Resource" path="res://data/quests/Q02.tres" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/player/Traveler.tscn" id="4"]
+[ext_resource type="Script" path="res://scripts/net/spawner.gd" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/npc/Animal.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/npc/WitheredPlant.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/npc/Saboteur.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/maps/TravelGate.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://assets_3p/kenney/models/tree.glb" id="10"]
+[ext_resource type="PackedScene" path="res://assets_3p/kenney/models/tree-high.glb" id="11"]
+[ext_resource type="PackedScene" path="res://assets_3p/kenney/models/rocks-low.glb" id="12"]
+[ext_resource type="PackedScene" path="res://assets_3p/kenney/models/fence.glb" id="13"]
+[ext_resource type="PackedScene" path="res://assets_3p/kenney/models/bridge.glb" id="14"]
+[ext_resource type="PackedScene" path="res://assets_3p/kenney/models/flowers.glb" id="15"]
+[ext_resource type="PackedScene" path="res://assets_3p/kenney/models/grass.glb" id="16"]
+
+[sub_resource type="ProceduralSkyMaterial" id="EdenSkyMat"]
+sky_top_color = Color(0.35, 0.7, 0.95, 1)
+sky_horizon_color = Color(0.85, 0.95, 0.8, 1)
+ground_bottom_color = Color(0.15, 0.3, 0.15, 1)
+ground_horizon_color = Color(0.6, 0.8, 0.6, 1)
+
+[sub_resource type="Sky" id="EdenSky"]
+sky_material = SubResource("EdenSkyMat")
+
+[sub_resource type="Environment" id="EdenEnv"]
+background_mode = 2
+sky = SubResource("EdenSky")
+ambient_light_source = 2
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="GroundMat"]
+albedo_color = Color(0.35, 0.65, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="PlaneMesh" id="GroundMesh"]
+material = SubResource("GroundMat")
+size = Vector2(80, 80)
+
+[sub_resource type="BoxShape3D" id="GroundShape"]
+size = Vector3(80, 1, 80)
+
+[sub_resource type="StandardMaterial3D" id="WaterMat"]
+transparency = 1
+albedo_color = Color(0.2, 0.5, 0.9, 0.6)
+emission_enabled = true
+emission = Color(0.2, 0.5, 0.9, 1)
+emission_energy_multiplier = 0.4
+
+[sub_resource type="PlaneMesh" id="RiverMesh"]
+material = SubResource("WaterMat")
+size = Vector2(40, 4)
+
+[node name="Map_02_Creacion" type="Node3D"]
+script = ExtResource("1")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 10, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("EdenEnv")
+
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="GroundMesh" type="MeshInstance3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("GroundMesh")
+
+[node name="GroundCol" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("GroundShape")
+
+[node name="River1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.52, -15)
+mesh = SubResource("RiverMesh")
+
+[node name="River2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 0.52, 0)
+mesh = SubResource("RiverMesh")
+
+[node name="Bridge" parent="." instance=ExtResource("14")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0.5, -15)
+
+[node name="SpawnPoint" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1, 18)
+
+[node name="Traveler" parent="." instance=ExtResource("4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1, 18)
+
+[node name="Players" type="Node3D" parent="."]
+
+[node name="Net" type="Node3D" parent="."]
+
+[node name="Spawner" type="MultiplayerSpawner" parent="Net"]
+script = ExtResource("5")
+
+[node name="Q02" type="Node" parent="."]
+script = ExtResource("2")
+data = ExtResource("3")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="Q02"]
+
+[node name="Plant1" parent="." instance=ExtResource("7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0.5, -6)
+
+[node name="Plant2" parent="." instance=ExtResource("7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.5, -8)
+
+[node name="Plant3" parent="." instance=ExtResource("7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.5, 8)
+
+[node name="Plant4" parent="." instance=ExtResource("7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.5, 10)
+
+[node name="Animal1" parent="." instance=ExtResource("6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -12)
+display_name = "Oveja"
+
+[node name="Animal2" parent="." instance=ExtResource("6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.5, 2)
+display_name = "Cordero"
+tint = Color(0.85, 0.75, 0.55, 1)
+
+[node name="Animal3" parent="." instance=ExtResource("6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.5, 4)
+display_name = "Ciervo"
+tint = Color(0.5, 0.35, 0.25, 1)
+
+[node name="Animal4" parent="." instance=ExtResource("6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.5, 12)
+display_name = "Buey"
+tint = Color(0.45, 0.45, 0.5, 1)
+
+[node name="Saboteur" parent="." instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -2)
+
+[node name="ExitGate" parent="." instance=ExtResource("9")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 22)
+
+[node name="Banner" type="Label3D" parent="."]
+visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -5)
+billboard = 1
+no_depth_test = true
+font_size = 96
+pixel_size = 0.01
+outline_size = 16
+text = "..."
+
+[node name="ProgressLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 4.5, 13)
+billboard = 1
+no_depth_test = true
+font_size = 56
+pixel_size = 0.01
+outline_size = 10
+text = "Restauración del Edén: 0/8"
+
+[node name="Tree1" parent="." instance=ExtResource("10")]
+transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, -20, 0.5, -10)
+
+[node name="Tree2" parent="." instance=ExtResource("10")]
+transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, 20, 0.5, -12)
+
+[node name="Tree3" parent="." instance=ExtResource("10")]
+transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, -18, 0.5, 12)
+
+[node name="Tree4" parent="." instance=ExtResource("10")]
+transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, 0, 0.5, -25)
+
+[node name="TreeHigh1" parent="." instance=ExtResource("11")]
+transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, 25, 0.5, -20)
+
+[node name="TreeHigh2" parent="." instance=ExtResource("11")]
+transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, -25, 0.5, -18)
+
+[node name="Rocks1" parent="." instance=ExtResource("12")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.5, -14)
+
+[node name="Rocks2" parent="." instance=ExtResource("12")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.5, 14)
+
+[node name="Fence1" parent="." instance=ExtResource("13")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.5, 6)
+
+[node name="Fence2" parent="." instance=ExtResource("13")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.5, 6)
+
+[node name="Fence3" parent="." instance=ExtResource("13")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.5, -6)
+
+[node name="Fence4" parent="." instance=ExtResource("13")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.5, -6)
+
+[node name="Flowers1" parent="." instance=ExtResource("15")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.5, 4)
+
+[node name="Flowers2" parent="." instance=ExtResource("15")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.5, -3)
+
+[node name="Grass1" parent="." instance=ExtResource("16")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.5, -10)
+
+[node name="Grass2" parent="." instance=ExtResource("16")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.5, 6)

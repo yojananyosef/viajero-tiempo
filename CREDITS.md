@@ -9,7 +9,12 @@ Fuente: https://kenney.nl/assets — licencia CC0 por pack.
   Usado en SPEC-004 Q01: `assets_3p/kenney/models/character-male-a.glb` (Guía Enoc).
   Zips fuente (no commiteados,Ignored por .gitignore): re-descargables desde URLs arriba.
 - [ ] Blocky Characters — variantes (pendiente)
-- [ ] Nature Kit / Mini Forest — Edén, Canaán, Ararat (pendiente)
+- [x] Nature Kit / Mini Forest — Edén, Canaán, Ararat (Mini Forest descargado 2026-09-14, CC0).
+  Usados en SPEC-005 Q02: `tree.glb`, `tree-high.glb`, `forest-plant.glb` (renombrado
+  desde plant.glb), `patch-grass.glb`, `rocks-low.glb`, `fence.glb`, `bridge.glb`,
+  más `flowers.glb` y `grass.glb` del Platformer Kit.
+  Fauna del Edén: modelos propios placeholder (cápsula+esfera cute, sin licencia
+  tercera; el Animal Pack de Kenney es 2D y no sirve).
 - [ ] Modular Dungeon / Cave Kit — Arca interior, Sinaí, Babel interior (pendiente)
 - [x] Platformer Kit — islas fragmentadas por anomalías (descargado 2026-09-14, CC0).
   Usados en SPEC-004 Q01: `assets_3p/kenney/models/platform.glb` (dais del portal),

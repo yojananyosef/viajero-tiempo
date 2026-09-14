@@ -4,15 +4,19 @@ extends Node
 ## cuando exista UI; el estado canónico vive en el host). Nunca muta el .tres.
 
 signal quest_changed(state: StringName)
+signal progress_changed(done: int, total: int)
 
 @export var data: QuestData
 
 var state: StringName = &"locked"
 var line: int = -1
+var done_count: int = 0
 
 
 func _ready() -> void:
-	add_to_group("q01")
+	if data != null:
+		add_to_group("quest_" + data.quest_id)
+	_setup_replication()
 	var save := get_node_or_null("/root/Save")
 	var chapter := 1
 	var flags := {}
@@ -64,6 +68,40 @@ func restore() -> bool:
 		save.save_game()
 	quest_changed.emit(state)
 	return true
+
+
+## SPEC-005 — Contador de tareas (riega/calma). Solo solo/servidor cuentan;
+## el MultiplayerSynchronizer replica done_count+state a los clientes.
+func register_task() -> bool:
+	if data == null or not _authoritative():
+		return false
+	if state == &"available":
+		state = &"active"
+		quest_changed.emit(state)
+	if state != &"active":
+		return false
+	if done_count >= data.task_total:
+		return false
+	done_count += 1
+	progress_changed.emit(done_count, data.task_total)
+	if done_count >= data.task_total:
+		state = &"done"
+		quest_changed.emit(state)
+	return true
+
+
+func _authoritative() -> bool:
+	return multiplayer.multiplayer_peer == null or multiplayer.is_server()
+
+
+func _setup_replication() -> void:
+	var sync := get_node_or_null("MultiplayerSynchronizer") as MultiplayerSynchronizer
+	if sync == null:
+		return
+	var cfg := SceneReplicationConfig.new()
+	cfg.add_property(".:done_count")
+	cfg.add_property(".:state")
+	sync.replication_config = cfg
 
 
 func _finish_dialogue() -> void:

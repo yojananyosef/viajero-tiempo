@@ -15,6 +15,7 @@ extends CharacterBody3D
 const COYOTE_TIME: float = 0.1
 
 var anim_state: StringName = &"idle"
+var cutscene_lock := false
 
 var _coyote: float = 0.0
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
@@ -23,6 +24,7 @@ var _save: Node = null
 
 @onready var _visual: MeshInstance3D = $Visual
 @onready var _rig: SpringArm3D = $CameraRig
+@onready var _staff: Node3D = $Staff
 
 
 func _ready() -> void:
@@ -76,6 +78,10 @@ func _physics_process(delta: float) -> void:
 		sprinting = bool(intent.get("sprint", false))
 	if input_vec.length() > 1.0:
 		input_vec = input_vec.normalized()
+	if cutscene_lock:
+		input_vec = Vector2.ZERO
+		jump_pressed = false
+		sprinting = false
 
 	# Dirección relativa al yaw de la cámara para que WASD siga al encuadre.
 	var yaw: float = _rig.global_rotation.y if is_instance_valid(_rig) else global_rotation.y
@@ -108,6 +114,14 @@ func _physics_process(delta: float) -> void:
 		var target_yaw := atan2(dir.x, dir.z)
 		_visual.rotation.y = lerp_angle(_visual.rotation.y, target_yaw, minf(1.0, turn_speed * delta))
 	_update_anim_state(sprinting)
+	_update_staff()
+
+
+## SPEC-005: el cayado aparece al recibirlo (flag local; cada peer lo muestra).
+func _update_staff() -> void:
+	if not is_instance_valid(_staff) or _save == null:
+		return
+	_staff.visible = bool((_save.get("state") as Dictionary).get("flags", {}).get("cayado_pastor", false))
 
 
 func _client_tick() -> void:
@@ -115,11 +129,14 @@ func _client_tick() -> void:
 	# mueve y el synchronizer devuelve el estado. Los avatares ajenos esperan.
 	if _net == null or not is_local_avatar():
 		return
-	_net.send_intent({
-		"dir": [Input.get_axis("move_left", "move_right"), Input.get_axis("move_forward", "move_back")],
-		"jump": Input.is_action_just_pressed("jump"),
-		"sprint": Input.is_action_pressed("sprint"),
-	})
+	var iv := Vector2(Input.get_axis("move_left", "move_right"), Input.get_axis("move_forward", "move_back"))
+	var jump := Input.is_action_just_pressed("jump")
+	var sprint := Input.is_action_pressed("sprint")
+	if cutscene_lock:
+		iv = Vector2.ZERO
+		jump = false
+		sprint = false
+	_net.send_intent({"dir": [iv.x, iv.y], "jump": jump, "sprint": sprint})
 
 
 func _update_anim_state(sprinting: bool) -> void:

@@ -11,3 +11,5 @@ extends Resource
 @export var dialogue: Array[String] = []
 @export var seal_flag: String = "q01_sello"
 @export var blessing_flag: String = "bendicion_guia"
+@export var task_total: int = 0
+@export var task_verb: String = "Restaurar"
