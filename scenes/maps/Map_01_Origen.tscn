@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://viajero_map01_origen"]
+[gd_scene load_steps=9 format=3 uid="uid://viajero_map01_origen"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/Traveler.tscn" id="1"]
 [ext_resource type="Script" path="res://scripts/gameplay/map_origen.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/net/spawner.gd" id="3"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat_1"]
 sky_top_color = Color(0.35, 0.55, 0.9, 1)
@@ -38,6 +39,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
 [node name="Traveler" parent="." instance=ExtResource("1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Players" type="Node3D" parent="."]
+
+[node name="Net" type="Node3D" parent="."]
+
+[node name="Spawner" type="MultiplayerSpawner" parent="Net"]
+script = ExtResource("3")
 
 [node name="Ground" type="StaticBody3D" parent="."]
 

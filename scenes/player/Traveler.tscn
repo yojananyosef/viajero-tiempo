@@ -41,3 +41,7 @@ script = ExtResource("2")
 [node name="Camera3D" type="Camera3D" parent="CameraRig"]
 current = true
 fov = 65.0
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+; La config de replicación (position, velocity, anim_state, Visual:rotation)
+; la pone mover.gd por código para no depender del formato del .tscn.

@@ -16,6 +16,8 @@ boot_splash/bg_color=Color(0.05, 0.06, 0.1, 1)
 [autoload]
 
 Save="*res://scripts/core/save.gd"
+Net="*res://scripts/core/net.gd"
+Lobby="*res://scripts/net/lobby.gd"
 
 ; Futuros (GameState/Net/TimeLine) en sus specs:
 ; GameState="*res://scripts/core/game_state.gd"

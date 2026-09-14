@@ -15,6 +15,15 @@ extends SpringArm3D
 
 
 func _ready() -> void:
+	# En red solo el avatar local tiene cámara: los ajenos son monigotes
+	# que mueve el servidor (el synchronizer los posiciona).
+	var p := get_parent()
+	if p != null and p.has_method("is_local_avatar") and not bool(p.call("is_local_avatar")):
+		if is_instance_valid(_cam):
+			_cam.current = false
+		set_process(false)
+		set_process_unhandled_input(false)
+		return
 	rotation = Vector3(deg_to_rad(target_pitch_deg), target_yaw, 0.0)
 	if is_instance_valid(_cam):
 		_cam.current = true
