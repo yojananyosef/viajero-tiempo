@@ -30,7 +30,7 @@ func fire_from(shooter: Node3D, target_pos: Vector3) -> bool:
 	return false
 
 
-func fire_forward(shooter: Node3D) -> bool:
+func fire_forward(shooter: Node3D, damage: int = 25) -> bool:
 	if multiplayer.multiplayer_peer != null and not multiplayer.is_server():
 		return false
 	var origin := shooter.global_position + Vector3(0, 1.2, 0)
@@ -40,6 +40,6 @@ func fire_forward(shooter: Node3D) -> bool:
 		fwd = Vector3(0, 0, -1)
 	for p in get_children():
 		if p != null and p.get("active") == false:
-			p.fire(origin, fwd.normalized())
+			p.fire(origin, fwd.normalized(), damage)
 			return true
 	return false

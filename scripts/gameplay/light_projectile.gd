@@ -1,6 +1,6 @@
 extends Area3D
 ## SPEC-006 — Proyectil de luz (pool). Solo el servidor lo mueve y decide daño.
-## Daño fijo del servidor (25): el cliente nunca lo dicta (anti-cheat 1-hit).
+## SPEC-007 — Daño por senda (parámetro del servidor): el cliente nunca lo dicta.
 
 const DAMAGE: int = 25
 const SPEED: float = 22.0
@@ -11,6 +11,7 @@ var active := false
 var dir := Vector3.FORWARD
 var _life := 0.0
 var _from := Vector3.ZERO
+var _damage: int = DAMAGE
 
 var _mesh: MeshInstance3D = null
 
@@ -44,10 +45,11 @@ func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 
 
-func fire(origin: Vector3, direction: Vector3) -> void:
+func fire(origin: Vector3, direction: Vector3, damage: int = DAMAGE) -> void:
 	_from = origin
 	global_position = origin
 	dir = direction.normalized()
+	_damage = damage
 	_life = LIFE
 	active = true
 	visible = true
@@ -79,5 +81,5 @@ func _on_body_entered(body: Node3D) -> void:
 	if multiplayer.multiplayer_peer != null and not multiplayer.is_server():
 		return
 	if body != null and body.has_method("take_damage"):
-		body.take_damage(DAMAGE)
+		body.take_damage(_damage)
 		deactivate()

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/class_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+class_id = "escriba"
+title = "Escriba"
+desc = "Palabra/luz a distancia. Frágil y letal."
+max_hp = 80
+walk_speed = 4.8
+run_speed = 7.5
+skill1_name = "Palabra fulgurante"
+skill1_damage = 35
+skill1_cooldown = 0.6
+skill2_name = "Juicio mayor"
+skill2_heal = 0
+skill2_cooldown = 6.0
+tint = Color(1, 0.85, 0.4, 1)

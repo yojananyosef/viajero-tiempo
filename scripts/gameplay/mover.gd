@@ -16,16 +16,28 @@ extends CharacterBody3D
 @export var skill_range: float = 28.0
 
 const COYOTE_TIME: float = 0.1
+const CLASS_PATHS: Dictionary = {
+	"guardian": "res://data/classes/guardian.tres",
+	"escriba": "res://data/classes/escriba.tres",
+	"pastor": "res://data/classes/pastor.tres",
+}
 
 var anim_state: StringName = &"idle"
 var cutscene_lock := false
 var hp: int = 100
+var class_id: String = "llamado"
+var skill1_damage: int = 25
+var skill1_name: String = "Luz"
+var skill2_name: String = "—"
+var skill2_heal: int = 0
+var skill2_cooldown: float = 8.0
 
 var _coyote: float = 0.0
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
 var _net: Node = null
 var _save: Node = null
 var _skill_cd: float = 0.0
+var _skill2_cd: float = 0.0
 
 @onready var _visual: MeshInstance3D = $Visual
 @onready var _rig: SpringArm3D = $CameraRig
@@ -37,6 +49,53 @@ func _ready() -> void:
 	_save = get_node_or_null("/root/Save")
 	hp = max_hp
 	_setup_replication()
+	# SPEC-007: restaura la senda persistida (save → avatar).
+	if _save != null:
+		var cid := str((_save.get("state") as Dictionary).get("player", {}).get("class", "llamado"))
+		if cid in CLASS_PATHS:
+			_apply_class_stats(cid)
+
+
+## SPEC-007 — Cambio de senda (solo solo/servidor). Cambia stats/skills/HUD,
+## persiste en save y se sincroniza vía `class_id` replicado.
+func apply_class(cid: String) -> void:
+	if multiplayer.multiplayer_peer != null and not multiplayer.is_server():
+		return
+	if not (cid in CLASS_PATHS):
+		return
+	_apply_class_stats(cid)
+	if _save != null:
+		((_save.get("state") as Dictionary).get("player", {}) as Dictionary)["class"] = cid
+		_save.save_game()
+
+
+func _apply_class_stats(cid: String) -> void:
+	var data := load(CLASS_PATHS[cid]) as Resource
+	if data == null:
+		return
+	class_id = cid
+	max_hp = int(data.get("max_hp"))
+	walk_speed = float(data.get("walk_speed"))
+	run_speed = float(data.get("run_speed"))
+	skill1_damage = int(data.get("skill1_damage"))
+	skill1_name = str(data.get("skill1_name"))
+	skill2_name = str(data.get("skill2_name"))
+	skill2_heal = int(data.get("skill2_heal"))
+	skill2_cooldown = float(data.get("skill2_cooldown"))
+	skill_cooldown = float(data.get("skill1_cooldown"))
+	hp = max_hp
+	_tint_visual(data.get("tint"))
+
+
+func _tint_visual(c) -> void:
+	if not is_instance_valid(_visual):
+		return
+	var m := StandardMaterial3D.new()
+	m.albedo_color = c if c is Color else Color(0.98, 0.78, 0.42)
+	m.roughness = 0.6
+	m.emission_enabled = true
+	m.emission = Color(0.45, 0.32, 0.12)
+	_visual.material_override = m
 
 
 ## SPEC-006 — Daño solo válido en solo/servidor. El cliente no se daña solo.
@@ -100,6 +159,7 @@ func _physics_process(delta: float) -> void:
 	var jump_pressed := false
 	var sprinting := false
 	var skill_pressed := false
+	var skill2_pressed := false
 	if not online() or owner_peer_id() == 1:
 		input_vec = Vector2(
 			Input.get_axis("move_left", "move_right"),
@@ -108,6 +168,7 @@ func _physics_process(delta: float) -> void:
 		jump_pressed = Input.is_action_just_pressed("jump")
 		sprinting = Input.is_action_pressed("sprint")
 		skill_pressed = Input.is_action_just_pressed("skill")
+		skill2_pressed = Input.is_action_just_pressed("skill2")
 	else:
 		var intent: Dictionary = _net.get_intent(owner_peer_id()) if _net != null else {}
 		var d = intent.get("dir", [0.0, 0.0])
@@ -116,6 +177,7 @@ func _physics_process(delta: float) -> void:
 		jump_pressed = bool(intent.get("jump", false))
 		sprinting = bool(intent.get("sprint", false))
 		skill_pressed = bool(intent.get("skill", false))
+		skill2_pressed = bool(intent.get("skill2", false))
 	if input_vec.length() > 1.0:
 		input_vec = input_vec.normalized()
 	if cutscene_lock:
@@ -123,6 +185,7 @@ func _physics_process(delta: float) -> void:
 		jump_pressed = false
 		sprinting = false
 		skill_pressed = false
+		skill2_pressed = false
 
 	# Dirección relativa al yaw de la cámara para que WASD siga al encuadre.
 	var yaw: float = _rig.global_rotation.y if is_instance_valid(_rig) else global_rotation.y
@@ -157,8 +220,11 @@ func _physics_process(delta: float) -> void:
 	_update_anim_state(sprinting)
 	_update_staff()
 	_skill_cd -= delta
+	_skill2_cd -= delta
 	if skill_pressed:
 		_try_skill()
+	if skill2_pressed:
+		_try_skill2()
 
 
 ## SPEC-005: el cayado aparece al recibirlo (flag local; cada peer lo muestra).
@@ -177,23 +243,41 @@ func _client_tick() -> void:
 	var jump := Input.is_action_just_pressed("jump")
 	var sprint := Input.is_action_pressed("sprint")
 	var skill := Input.is_action_just_pressed("skill")
+	var skill2 := Input.is_action_just_pressed("skill2")
 	if cutscene_lock:
 		iv = Vector2.ZERO
 		jump = false
 		sprint = false
 		skill = false
-	_net.send_intent({"dir": [iv.x, iv.y], "jump": jump, "sprint": sprint, "skill": skill})
+		skill2 = false
+	_net.send_intent({"dir": [iv.x, iv.y], "jump": jump, "sprint": sprint, "skill": skill, "skill2": skill2})
 
 
 ## SPEC-006 — Ataque de luz: el servidor valida cooldown y dispara al frente.
-## El daño lo decide el proyectil (constante del servidor), nunca el cliente.
+## El daño lo decide el servidor (daño de senda), nunca el cliente.
 func _try_skill() -> void:
 	if _skill_cd > 0.0 or cutscene_lock:
 		return
 	_skill_cd = skill_cooldown
 	var pool := get_tree().get_first_node_in_group("light_pool")
 	if pool != null and pool.has_method("fire_forward"):
-		pool.call("fire_forward", self)
+		pool.call("fire_forward", self, skill1_damage)
+
+
+## SPEC-007 — Segunda skill: cura (Pastor/Guardián) o juicio potente (Escriba).
+## Solo el servidor aplica; cooldown por senda.
+func _try_skill2() -> void:
+	if _skill2_cd > 0.0 or cutscene_lock:
+		return
+	if multiplayer.multiplayer_peer != null and not multiplayer.is_server():
+		return
+	_skill2_cd = skill2_cooldown
+	if skill2_heal > 0:
+		hp = mini(max_hp, hp + skill2_heal)
+	else:
+		var pool := get_tree().get_first_node_in_group("light_pool")
+		if pool != null and pool.has_method("fire_forward"):
+			pool.call("fire_forward", self, skill1_damage * 2)
 
 
 func _update_anim_state(sprinting: bool) -> void:
@@ -215,5 +299,6 @@ func _setup_replication() -> void:
 	cfg.add_property(".:velocity")
 	cfg.add_property(".:anim_state")
 	cfg.add_property(".:hp")
+	cfg.add_property(".:class_id")
 	cfg.add_property("Visual:rotation")
 	sync.replication_config = cfg

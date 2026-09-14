@@ -111,6 +111,7 @@ func _sanitize_intent(intent: Dictionary) -> Dictionary:
 		"jump": bool(intent.get("jump", false)),
 		"sprint": bool(intent.get("sprint", false)),
 		"skill": bool(intent.get("skill", false)),
+		"skill2": bool(intent.get("skill2", false)),
 	}
 
 

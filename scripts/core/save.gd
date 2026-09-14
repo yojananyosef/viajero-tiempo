@@ -111,6 +111,10 @@ func apply_state(data: Dictionary) -> void:
 		p.global_position = Vector3(float(pos[0]), float(pos[1]), float(pos[2]))
 		if p is CharacterBody3D:
 			(p as CharacterBody3D).velocity = Vector3.ZERO
+	# SPEC-007: restaura la senda persistida (F9/load).
+	var cid := str((data.get("player", {}) as Dictionary).get("class", "llamado"))
+	if cid != "" and cid != "llamado" and p.has_method("apply_class"):
+		p.call("apply_class", cid)
 
 
 func notify_map_changed(map_id: String) -> void:
