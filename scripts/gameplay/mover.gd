@@ -11,16 +11,21 @@ extends CharacterBody3D
 @export var acceleration: float = 30.0
 @export var turn_speed: float = 12.0
 @export var gravity_scale: float = 1.0
+@export var max_hp: int = 100
+@export var skill_cooldown: float = 0.45
+@export var skill_range: float = 28.0
 
 const COYOTE_TIME: float = 0.1
 
 var anim_state: StringName = &"idle"
 var cutscene_lock := false
+var hp: int = 100
 
 var _coyote: float = 0.0
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
 var _net: Node = null
 var _save: Node = null
+var _skill_cd: float = 0.0
 
 @onready var _visual: MeshInstance3D = $Visual
 @onready var _rig: SpringArm3D = $CameraRig
@@ -30,7 +35,32 @@ var _save: Node = null
 func _ready() -> void:
 	_net = get_node_or_null("/root/Net")
 	_save = get_node_or_null("/root/Save")
+	hp = max_hp
 	_setup_replication()
+
+
+## SPEC-006 — Daño solo válido en solo/servidor. El cliente no se daña solo.
+func take_damage(amount: int) -> void:
+	if multiplayer.multiplayer_peer != null and not multiplayer.is_server():
+		return
+	if hp <= 0:
+		return
+	hp = maxi(0, hp - amount)
+	if hp <= 0:
+		_respawn()
+
+
+func is_down() -> bool:
+	return hp <= 0
+
+
+func _respawn() -> void:
+	# Muerte → entrada del mapa, sin pérdida salvo progreso de oleada.
+	var sp := get_tree().current_scene.get_node_or_null("SpawnPoint") as Node3D
+	if sp != null:
+		global_position = sp.global_position
+	velocity = Vector3.ZERO
+	hp = max_hp
 
 
 func online() -> bool:
@@ -62,6 +92,7 @@ func _physics_process(delta: float) -> void:
 	var input_vec := Vector2.ZERO
 	var jump_pressed := false
 	var sprinting := false
+	var skill_pressed := false
 	if not online() or owner_peer_id() == 1:
 		input_vec = Vector2(
 			Input.get_axis("move_left", "move_right"),
@@ -69,6 +100,7 @@ func _physics_process(delta: float) -> void:
 		)
 		jump_pressed = Input.is_action_just_pressed("jump")
 		sprinting = Input.is_action_pressed("sprint")
+		skill_pressed = Input.is_action_just_pressed("skill")
 	else:
 		var intent: Dictionary = _net.get_intent(owner_peer_id()) if _net != null else {}
 		var d = intent.get("dir", [0.0, 0.0])
@@ -76,12 +108,14 @@ func _physics_process(delta: float) -> void:
 			input_vec = Vector2(float(d[0]), float(d[1]))
 		jump_pressed = bool(intent.get("jump", false))
 		sprinting = bool(intent.get("sprint", false))
+		skill_pressed = bool(intent.get("skill", false))
 	if input_vec.length() > 1.0:
 		input_vec = input_vec.normalized()
 	if cutscene_lock:
 		input_vec = Vector2.ZERO
 		jump_pressed = false
 		sprinting = false
+		skill_pressed = false
 
 	# Dirección relativa al yaw de la cámara para que WASD siga al encuadre.
 	var yaw: float = _rig.global_rotation.y if is_instance_valid(_rig) else global_rotation.y
@@ -115,6 +149,9 @@ func _physics_process(delta: float) -> void:
 		_visual.rotation.y = lerp_angle(_visual.rotation.y, target_yaw, minf(1.0, turn_speed * delta))
 	_update_anim_state(sprinting)
 	_update_staff()
+	_skill_cd -= delta
+	if skill_pressed:
+		_try_skill()
 
 
 ## SPEC-005: el cayado aparece al recibirlo (flag local; cada peer lo muestra).
@@ -132,11 +169,24 @@ func _client_tick() -> void:
 	var iv := Vector2(Input.get_axis("move_left", "move_right"), Input.get_axis("move_forward", "move_back"))
 	var jump := Input.is_action_just_pressed("jump")
 	var sprint := Input.is_action_pressed("sprint")
+	var skill := Input.is_action_just_pressed("skill")
 	if cutscene_lock:
 		iv = Vector2.ZERO
 		jump = false
 		sprint = false
-	_net.send_intent({"dir": [iv.x, iv.y], "jump": jump, "sprint": sprint})
+		skill = false
+	_net.send_intent({"dir": [iv.x, iv.y], "jump": jump, "sprint": sprint, "skill": skill})
+
+
+## SPEC-006 — Ataque de luz: el servidor valida cooldown y dispara al frente.
+## El daño lo decide el proyectil (constante del servidor), nunca el cliente.
+func _try_skill() -> void:
+	if _skill_cd > 0.0 or cutscene_lock:
+		return
+	_skill_cd = skill_cooldown
+	var pool := get_tree().get_first_node_in_group("light_pool")
+	if pool != null and pool.has_method("fire_forward"):
+		pool.call("fire_forward", self)
 
 
 func _update_anim_state(sprinting: bool) -> void:
@@ -157,5 +207,6 @@ func _setup_replication() -> void:
 	cfg.add_property(".:position")
 	cfg.add_property(".:velocity")
 	cfg.add_property(".:anim_state")
+	cfg.add_property(".:hp")
 	cfg.add_property("Visual:rotation")
 	sync.replication_config = cfg

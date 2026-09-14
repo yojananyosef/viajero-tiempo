@@ -1,0 +1,52 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/whisper.gd" id="1"]
+
+[sub_resource type="CapsuleShape3D" id="WhisperBody"]
+radius = 0.35
+height = 1.5
+
+[sub_resource type="CapsuleMesh" id="WhisperMesh"]
+radius = 0.35
+height = 1.5
+
+[sub_resource type="SphereMesh" id="WhisperHead"]
+radius = 0.24
+height = 0.48
+
+[sub_resource type="StandardMaterial3D" id="WhisperMat"]
+albedo_color = Color(0.2, 0.12, 0.3, 1)
+roughness = 0.8
+
+[node name="Whisper" type="CharacterBody3D" groups=["enemies"]]
+collision_layer = 8
+collision_mask = 1
+script = ExtResource("1")
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+shape = SubResource("WhisperBody")
+
+[node name="Model" type="Node3D" parent="."]
+
+[node name="Body" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+mesh = SubResource("WhisperMesh")
+material_override = SubResource("WhisperMat")
+
+[node name="Head" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+mesh = SubResource("WhisperHead")
+material_override = SubResource("WhisperMat")
+
+[node name="NameLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, 0)
+billboard = 1
+no_depth_test = true
+font_size = 40
+pixel_size = 0.008
+outline_size = 8
+modulate = Color(0.9, 0.6, 1, 1)
+text = "Susurro (eco)"
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]

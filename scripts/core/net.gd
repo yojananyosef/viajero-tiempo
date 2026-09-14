@@ -110,6 +110,7 @@ func _sanitize_intent(intent: Dictionary) -> Dictionary:
 		"dir": [d.x, d.y],
 		"jump": bool(intent.get("jump", false)),
 		"sprint": bool(intent.get("sprint", false)),
+		"skill": bool(intent.get("skill", false)),
 	}
 
 
