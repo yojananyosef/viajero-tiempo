@@ -104,6 +104,12 @@ target_scene = "res://scenes/maps/Map_03_Caida.tscn"
 target_map_id = "map_03"
 title = "Volver a la Caída"
 
+[node name="NextGate" parent="." instance=ExtResource("7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.5, 16)
+target_scene = "res://scenes/maps/Map_05_Ofrenda.tscn"
+target_map_id = "map_05"
+title = "Hacia la Ofrenda (cap. 5)"
+
 [node name="Banner" type="Label3D" parent="."]
 visible = false
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -5)

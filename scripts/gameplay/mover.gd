@@ -113,6 +113,15 @@ func is_down() -> bool:
 	return hp <= 0
 
 
+## SPEC-008 — Cura por drops (solo solo/servidor aplican).
+func heal(amount: int) -> void:
+	if multiplayer.multiplayer_peer != null and not multiplayer.is_server():
+		return
+	if hp <= 0:
+		return
+	hp = mini(max_hp, hp + amount)
+
+
 func _respawn() -> void:
 	# Muerte → entrada del mapa, sin pérdida salvo progreso de oleada.
 	var sp: Node3D = null
