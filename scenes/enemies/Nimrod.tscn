@@ -1,0 +1,49 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/nimrod.gd" id="1"]
+
+[sub_resource type="CapsuleShape3D" id="NimrodBody"]
+radius = 0.55
+height = 2.4
+
+[sub_resource type="CapsuleMesh" id="NimrodMesh"]
+radius = 0.55
+height = 2.4
+
+[sub_resource type="BoxMesh" id="CrownMesh"]
+size = Vector3(0.5, 0.4, 0.5)
+
+[node name="Nimrod" type="CharacterBody3D" groups=["enemies"]]
+collision_layer = 8
+collision_mask = 1
+script = ExtResource("1")
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("NimrodBody")
+
+[node name="Model" type="Node3D" parent="."]
+
+[node name="Body" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+mesh = SubResource("NimrodMesh")
+
+[node name="Head" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.7, 0)
+mesh = SubResource("NimrodMesh")
+
+[node name="Crown" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6, 0)
+mesh = SubResource("CrownMesh")
+
+[node name="NameLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2, 0)
+billboard = 1
+no_depth_test = true
+font_size = 48
+pixel_size = 0.008
+outline_size = 8
+modulate = Color(1, 0.6, 0.4, 1)
+text = "Nimrod dormido… sella los 3 pisos"
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]

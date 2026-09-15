@@ -1,0 +1,16 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/quest_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+quest_id = "Q10"
+title = "La torre de Babel"
+chapter = 10
+unlock_chapter = 11
+npc_name = "Guardián de la dispersión"
+dialogue = Array[String]([])
+seal_flag = "q10_restaurado"
+blessing_flag = "expansion1_complete"
+task_total = 5
+task_verb = "Restaurar"

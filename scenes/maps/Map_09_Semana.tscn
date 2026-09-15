@@ -160,6 +160,12 @@ target_scene = "res://scenes/maps/Map_08_Ararat.tscn"
 target_map_id = "map_08"
 title = "Volver al Ararat"
 
+[node name="NextGate" parent="." instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.5, 18)
+target_scene = "res://scenes/maps/Map_10_Babel.tscn"
+target_map_id = "map_10"
+title = "Hacia Babel (cap. 10)"
+
 [node name="Banner" type="Label3D" parent="."]
 visible = false
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -5)
