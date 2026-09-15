@@ -16,6 +16,11 @@ extends CharacterBody3D
 @export var skill_range: float = 28.0
 
 const COYOTE_TIME: float = 0.1
+## SPEC-009 — Vuelo-travel (manto de viento): solo transporte, sin combate
+## aéreo. Corredor designado a 12m, colisión simple (clamp del mapa).
+const FLY_ALTITUDE: float = 12.0
+const FLY_SPEED: float = 9.0
+const FLY_HALF: float = 30.0
 const CLASS_PATHS: Dictionary = {
 	"guardian": "res://data/classes/guardian.tres",
 	"escriba": "res://data/classes/escriba.tres",
@@ -25,6 +30,7 @@ const CLASS_PATHS: Dictionary = {
 var anim_state: StringName = &"idle"
 var cutscene_lock := false
 var hp: int = 100
+var fly_mode := false
 var class_id: String = "llamado"
 var skill1_damage: int = 25
 var skill1_name: String = "Luz"
@@ -99,7 +105,10 @@ func _tint_visual(c) -> void:
 
 
 ## SPEC-006 — Daño solo válido en solo/servidor. El cliente no se daña solo.
+## SPEC-009 — En aire invulnerable (transporte, sin combates aire).
 func take_damage(amount: int) -> void:
+	if fly_mode:
+		return
 	if multiplayer.multiplayer_peer != null and not multiplayer.is_server():
 		return
 	if hp <= 0:
@@ -107,6 +116,49 @@ func take_damage(amount: int) -> void:
 	hp = maxi(0, hp - amount)
 	if hp <= 0:
 		_respawn()
+
+
+## SPEC-009 — Manto de viento: despegue/aterrizaje sincronizados.
+## Solo solo/servidor aplican; `fly_mode` se replica. Sin manto no hay vuelo.
+func has_manto() -> bool:
+	if _save == null:
+		return false
+	return bool((_save.get("state") as Dictionary).get("flags", {}).get("manto_viento", false))
+
+
+func takeoff() -> bool:
+	if multiplayer.multiplayer_peer != null and not multiplayer.is_server():
+		return false
+	if fly_mode or not has_manto():
+		return false
+	fly_mode = true
+	global_position.y = FLY_ALTITUDE
+	velocity = Vector3.ZERO
+	return true
+
+
+func land() -> bool:
+	if multiplayer.multiplayer_peer != null and not multiplayer.is_server():
+		return false
+	if not fly_mode:
+		return false
+	fly_mode = false
+	velocity.y = 0.0
+	return true
+
+
+## Red: solo RPC takeoff/land (confiables); el movimiento en aire viaja por
+## el MultiplayerSynchronizer (no fiable ordenado). Viaje solo/host.
+@rpc("any_peer", "call_local", "reliable")
+func takeoff_rpc() -> void:
+	if multiplayer.multiplayer_peer == null or multiplayer.is_server():
+		takeoff()
+
+
+@rpc("any_peer", "call_local", "reliable")
+func land_rpc() -> void:
+	if multiplayer.multiplayer_peer == null or multiplayer.is_server():
+		land()
 
 
 func is_down() -> bool:
@@ -200,6 +252,16 @@ func _physics_process(delta: float) -> void:
 	var yaw: float = _rig.global_rotation.y if is_instance_valid(_rig) else global_rotation.y
 	var dir: Vector3 = Basis(Vector3.UP, yaw) * Vector3(input_vec.x, 0.0, input_vec.y)
 
+	# SPEC-009 — En aire: corredor a FLY_ALTITUDE, sin gravedad ni skills.
+	# E en aire aterriza (solo/host).
+	if fly_mode:
+		if not online() or owner_peer_id() == 1:
+			if Input.is_action_just_pressed("interact"):
+				land()
+				return
+		_tick_fly(delta, dir, sprinting)
+		return
+
 	# Gravedad + coyote.
 	if is_on_floor():
 		_coyote = COYOTE_TIME
@@ -264,7 +326,10 @@ func _client_tick() -> void:
 
 ## SPEC-006 — Ataque de luz: el servidor valida cooldown y dispara al frente.
 ## El daño lo decide el servidor (daño de senda), nunca el cliente.
+## SPEC-009 — En aire sin skills (solo transporte).
 func _try_skill() -> void:
+	if fly_mode:
+		return
 	if _skill_cd > 0.0 or cutscene_lock:
 		return
 	_skill_cd = skill_cooldown
@@ -275,7 +340,10 @@ func _try_skill() -> void:
 
 ## SPEC-007 — Segunda skill: cura (Pastor/Guardián) o juicio potente (Escriba).
 ## Solo el servidor aplica; cooldown por senda.
+## SPEC-009 — En aire sin skills.
 func _try_skill2() -> void:
+	if fly_mode:
+		return
 	if _skill2_cd > 0.0 or cutscene_lock:
 		return
 	if multiplayer.multiplayer_peer != null and not multiplayer.is_server():
@@ -290,6 +358,9 @@ func _try_skill2() -> void:
 
 
 func _update_anim_state(sprinting: bool) -> void:
+	if fly_mode:
+		anim_state = &"fly"
+		return
 	var planar := Vector2(velocity.x, velocity.z).length()
 	if not is_on_floor():
 		anim_state = &"jump"
@@ -309,5 +380,23 @@ func _setup_replication() -> void:
 	cfg.add_property(".:anim_state")
 	cfg.add_property(".:hp")
 	cfg.add_property(".:class_id")
+	cfg.add_property(".:fly_mode")
 	cfg.add_property("Visual:rotation")
 	sync.replication_config = cfg
+
+
+## SPEC-009 — Tick de vuelo: corredor fijo a FLY_ALTITUDE, colisión simple
+## (clamp ±FLY_HALF). Movimiento en aire no fiable ordenado vía synchronizer.
+func _tick_fly(delta: float, dir: Vector3, sprinting: bool) -> void:
+	var speed: float = FLY_SPEED * (1.4 if sprinting else 1.0)
+	velocity.x = move_toward(velocity.x, dir.x * speed, acceleration * delta)
+	velocity.z = move_toward(velocity.z, dir.z * speed, acceleration * delta)
+	velocity.y = clampf((FLY_ALTITUDE - global_position.y) * 4.0, -4.0, 4.0)
+	move_and_slide()
+	global_position.x = clampf(global_position.x, -FLY_HALF, FLY_HALF)
+	global_position.z = clampf(global_position.z, -FLY_HALF, FLY_HALF)
+	if dir.length() > 0.1 and is_instance_valid(_visual):
+		_visual.rotation.y = lerp_angle(_visual.rotation.y, atan2(dir.x, dir.z), minf(1.0, turn_speed * delta))
+	_update_anim_state(sprinting)
+	_skill_cd -= delta
+	_skill2_cd -= delta

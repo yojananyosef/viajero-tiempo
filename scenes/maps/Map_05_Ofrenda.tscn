@@ -138,6 +138,12 @@ target_scene = "res://scenes/maps/Map_04_Redencion.tscn"
 target_map_id = "map_04"
 title = "Volver a la Redención"
 
+[node name="NextGate" parent="." instance=ExtResource("9")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.5, 18)
+target_scene = "res://scenes/maps/Map_06_Enoc.tscn"
+target_map_id = "map_06"
+title = "Hacia Set y Enoc (cap. 6)"
+
 [node name="Banner" type="Label3D" parent="."]
 visible = false
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -5)

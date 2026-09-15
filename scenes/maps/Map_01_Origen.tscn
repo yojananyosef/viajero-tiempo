@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://viajero_map01_origen"]
+[gd_scene load_steps=15 format=3 uid="uid://viajero_map01_origen"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/Traveler.tscn" id="1"]
 [ext_resource type="Script" path="res://scripts/gameplay/map_origen.gd" id="2"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/npc/Guide.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://scenes/maps/Portal.tscn" id="7"]
 [ext_resource type="PackedScene" path="res://scenes/npc/Echo.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/maps/TravelGate.tscn" id="9"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat_1"]
 sky_top_color = Color(0.35, 0.55, 0.9, 1)
@@ -65,6 +66,12 @@ travel_scene = "res://scenes/maps/Map_02_Creacion.tscn"
 
 [node name="Echo" parent="." instance=ExtResource("8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -9)
+
+[node name="SkyGate" parent="." instance=ExtResource("9")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.5, 6)
+target_scene = "res://scenes/maps/Map_06_Enoc.tscn"
+target_map_id = "map_06"
+title = "Volar a Enoc (manto, cap. 6)"
 
 [node name="Ground" type="StaticBody3D" parent="."]
 
