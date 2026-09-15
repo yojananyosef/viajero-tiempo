@@ -4,6 +4,7 @@
 export.cfg
 exports/builds/
 exports/debug/
+web/
 
 # Builds
 *.exe
