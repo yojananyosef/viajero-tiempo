@@ -1,0 +1,219 @@
+[gd_scene load_steps=27 format=3 uid="uid://viajero_map08_ararat"]
+
+[ext_resource type="Script" path="res://scripts/gameplay/map_ararat.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/gameplay/quest.gd" id="2"]
+[ext_resource type="Resource" path="res://data/quests/Q08.tres" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/player/Traveler.tscn" id="4"]
+[ext_resource type="Script" path="res://scripts/net/spawner.gd" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/npc/CampTask.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/npc/Barter.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/maps/TravelGate.tscn" id="8"]
+[ext_resource type="Script" path="res://scripts/gameplay/combat_pool.gd" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/npc/Animal.tscn" id="10"]
+
+[sub_resource type="ProceduralSkyMaterial" id="AraratSkyMat"]
+sky_top_color = Color(0.35, 0.55, 0.9, 1)
+sky_horizon_color = Color(0.9, 0.95, 1, 1)
+ground_bottom_color = Color(0.15, 0.12, 0.1, 1)
+ground_horizon_color = Color(0.5, 0.55, 0.45, 1)
+
+[sub_resource type="Sky" id="AraratSky"]
+sky_material = SubResource("AraratSkyMat")
+
+[sub_resource type="Environment" id="AraratEnv"]
+background_mode = 2
+sky = SubResource("AraratSky")
+ambient_light_source = 2
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="GroundMat"]
+albedo_color = Color(0.5, 0.6, 0.4, 1)
+roughness = 0.95
+
+[sub_resource type="PlaneMesh" id="GroundMesh"]
+material = SubResource("GroundMat")
+size = Vector2(60, 60)
+
+[sub_resource type="BoxShape3D" id="GroundShape"]
+size = Vector3(60, 1, 60)
+
+[sub_resource type="StandardMaterial3D" id="TentMat"]
+albedo_color = Color(0.85, 0.75, 0.6, 1)
+roughness = 0.9
+
+[sub_resource type="PrismMesh" id="TentMesh"]
+size = Vector3(4.0, 3.0, 4.0)
+
+[sub_resource type="StandardMaterial3D" id="BowRed"]
+albedo_color = Color(1, 0.3, 0.3, 1)
+emission_enabled = true
+emission = Color(1, 0.2, 0.2, 1)
+emission_energy_multiplier = 0.8
+
+[sub_resource type="TorusMesh" id="BowMesh1"]
+inner_radius = 0.25
+outer_radius = 4.0
+
+[sub_resource type="StandardMaterial3D" id="BowOrange"]
+albedo_color = Color(1, 0.65, 0.2, 1)
+emission_enabled = true
+emission = Color(1, 0.55, 0.1, 1)
+emission_energy_multiplier = 0.8
+
+[sub_resource type="TorusMesh" id="BowMesh2"]
+inner_radius = 0.25
+outer_radius = 3.4
+
+[sub_resource type="StandardMaterial3D" id="BowGreen"]
+albedo_color = Color(0.3, 0.9, 0.4, 1)
+emission_enabled = true
+emission = Color(0.2, 0.9, 0.3, 1)
+emission_energy_multiplier = 0.8
+
+[sub_resource type="TorusMesh" id="BowMesh3"]
+inner_radius = 0.25
+outer_radius = 2.8
+
+[sub_resource type="StandardMaterial3D" id="BowBlue"]
+albedo_color = Color(0.35, 0.55, 1, 1)
+emission_enabled = true
+emission = Color(0.25, 0.45, 1, 1)
+emission_energy_multiplier = 0.8
+
+[sub_resource type="TorusMesh" id="BowMesh4"]
+inner_radius = 0.25
+outer_radius = 2.2
+
+[node name="Map_08_Ararat" type="Node3D"]
+script = ExtResource("1")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 10, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("AraratEnv")
+
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="GroundMesh" type="MeshInstance3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("GroundMesh")
+
+[node name="GroundCol" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("GroundShape")
+
+[node name="SpawnPoint" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 18)
+
+[node name="Traveler" parent="." instance=ExtResource("4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 18)
+
+[node name="Players" type="Node3D" parent="."]
+
+[node name="Net" type="Node3D" parent="."]
+
+[node name="Spawner" type="MultiplayerSpawner" parent="Net"]
+script = ExtResource("5")
+
+[node name="Q08" type="Node" parent="."]
+script = ExtResource("2")
+data = ExtResource("3")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="Q08"]
+
+[node name="LightPool" type="Node3D" parent="."]
+script = ExtResource("9")
+
+[node name="AltarTask" parent="." instance=ExtResource("6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.5, 0)
+task_name = "Altar de gratitud"
+action_text = "E · Ofrecer gratitud"
+
+[node name="RainbowTask" parent="." instance=ExtResource("6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -6)
+task_name = "Sello del arcoíris"
+action_text = "E · Sellar el pacto"
+
+[node name="TentTask1" parent="." instance=ExtResource("6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.5, -4)
+task_name = "Tienda de Sem"
+action_text = "E · Levantar tienda"
+
+[node name="TentTask2" parent="." instance=ExtResource("6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.5, -4)
+task_name = "Tienda de Jafet"
+action_text = "E · Levantar tienda"
+
+[node name="Tent1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 1.5, -8)
+mesh = SubResource("TentMesh")
+material_override = SubResource("TentMat")
+
+[node name="Tent2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.5, -8)
+mesh = SubResource("TentMesh")
+material_override = SubResource("TentMat")
+
+[node name="Bow1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.5, -14)
+mesh = SubResource("BowMesh1")
+material_override = SubResource("BowRed")
+
+[node name="Bow2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.5, -14)
+mesh = SubResource("BowMesh2")
+material_override = SubResource("BowOrange")
+
+[node name="Bow3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.5, -14)
+mesh = SubResource("BowMesh3")
+material_override = SubResource("BowGreen")
+
+[node name="Bow4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.5, -14)
+mesh = SubResource("BowMesh4")
+material_override = SubResource("BowBlue")
+
+[node name="BarterPost" parent="." instance=ExtResource("7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 6)
+
+[node name="Sheep" parent="." instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.5, 10)
+display_name = "Oveja"
+
+[node name="Goat" parent="." instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.5, 10)
+display_name = "Cabra"
+
+[node name="ExitGate" parent="." instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 22)
+target_scene = "res://scenes/maps/Map_07_Diluvio.tscn"
+target_map_id = "map_07"
+title = "Volver al Arca"
+
+[node name="NextGate" parent="." instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.5, 18)
+target_scene = "res://scenes/maps/Map_09_Semana.tscn"
+target_map_id = "map_09"
+title = "Hacia la semana (cap. 9)"
+
+[node name="Banner" type="Label3D" parent="."]
+visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -5)
+billboard = 1
+no_depth_test = true
+font_size = 96
+pixel_size = 0.01
+outline_size = 16
+text = "..."
+
+[node name="ProgressLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 13)
+billboard = 1
+no_depth_test = true
+font_size = 56
+pixel_size = 0.01
+outline_size = 10
+text = "Reconstrucción del Ararat: 0/4"

@@ -185,6 +185,12 @@ target_scene = "res://scenes/maps/Map_06_Enoc.tscn"
 target_map_id = "map_06"
 title = "Volver con Enoc (a pie)"
 
+[node name="NextGate" parent="." instance=ExtResource("9")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.5, 18)
+target_scene = "res://scenes/maps/Map_08_Ararat.tscn"
+target_map_id = "map_08"
+title = "Hacia el Ararat (cap. 8)"
+
 [node name="Banner" type="Label3D" parent="."]
 visible = false
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, -5)

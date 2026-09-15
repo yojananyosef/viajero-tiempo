@@ -1,0 +1,16 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/quest_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+quest_id = "Q09"
+title = "La semana literal"
+chapter = 9
+unlock_chapter = 10
+npc_name = "Guardián de la semana"
+dialogue = Array[String]([])
+seal_flag = "q09_restaurado"
+blessing_flag = "cronometro"
+task_total = 7
+task_verb = "Sellar"

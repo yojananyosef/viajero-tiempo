@@ -1,0 +1,16 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/quest_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+quest_id = "Q08"
+title = "Después del diluvio"
+chapter = 8
+unlock_chapter = 9
+npc_name = "Noé"
+dialogue = Array[String]([])
+seal_flag = "q08_restaurado"
+blessing_flag = "pacto_arcoiris"
+task_total = 4
+task_verb = "Reconstruir"

@@ -107,6 +107,27 @@ func reset_progress() -> void:
 	quest_changed.emit(state)
 
 
+## SPEC-011 — Avance ordenado (sellos de la semana): solo cuenta si el índice
+## es exactamente el siguiente esperado (el servidor decide el orden).
+func try_ordered(idx: int) -> bool:
+	if data == null or not _authoritative():
+		return false
+	if state == &"available":
+		state = &"active"
+		quest_changed.emit(state)
+	if state != &"active":
+		return false
+	if idx != done_count + 1:
+		return false
+	return register_task()
+
+
+func expected_order() -> int:
+	if data == null:
+		return 0
+	return done_count + 1
+
+
 func _setup_replication() -> void:
 	var sync := get_node_or_null("MultiplayerSynchronizer") as MultiplayerSynchronizer
 	if sync == null:
