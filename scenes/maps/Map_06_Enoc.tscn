@@ -169,6 +169,12 @@ target_scene = "res://scenes/maps/Map_01_Origen.tscn"
 target_map_id = "map_01"
 title = "Volar al Origen (manto)"
 
+[node name="NextGate" parent="." instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.5, 20)
+target_scene = "res://scenes/maps/Map_07_Diluvio.tscn"
+target_map_id = "map_07"
+title = "Hacia el Diluvio (cap. 7)"
+
 [node name="Banner" type="Label3D" parent="."]
 visible = false
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -5)

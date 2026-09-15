@@ -94,6 +94,19 @@ func _authoritative() -> bool:
 	return multiplayer.multiplayer_peer == null or multiplayer.is_server()
 
 
+## SPEC-010 — Reinicio de instancia (wipe): vuelve a active con 0 tareas,
+## sin tocar capítulo ni sellos (no hay pérdida fuera).
+func reset_progress() -> void:
+	if data == null or not _authoritative():
+		return
+	if state != &"active" and state != &"done":
+		return
+	done_count = 0
+	state = &"active"
+	progress_changed.emit(done_count, data.task_total)
+	quest_changed.emit(state)
+
+
 func _setup_replication() -> void:
 	var sync := get_node_or_null("MultiplayerSynchronizer") as MultiplayerSynchronizer
 	if sync == null:
