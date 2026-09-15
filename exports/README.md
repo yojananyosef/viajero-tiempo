@@ -39,6 +39,27 @@ Notas:
   es solo-modo-solo. El multi real se prueba con cliente+servidor de
   escritorio (SPEC-013).
 
+## Preview en GitHub Pages (solo-modo-solo)
+
+URL: https://yojananyosef.github.io/viajero-tiempo/
+
+La rama `gh-pages` contiene SOLO el build (más `.nojekyll`); `main` sigue
+limpio (`web/` está gitignored). Republicar tras cada slice:
+
+```sh
+mkdir -p web
+godot --headless --path . --export-release "Web Local" web/index.html
+touch web/.nojekyll
+git worktree add /tmp/gh-pages gh-pages          # solo la primera vez
+cp web/index.html web/index.js web/index.wasm web/index.pck \
+   web/index.png web/index.icon.png web/index.apple-touch-icon.png \
+   web/index.audio.worklet.js web/index.audio.position.worklet.js \
+   web/.nojekyll /tmp/gh-pages/
+git -C /tmp/gh-pages add -A
+git -C /tmp/gh-pages commit -m "preview: build web <slice> (solo)"
+git -C /tmp/gh-pages push origin gh-pages
+```
+
 ## Servidor dedicado (SPEC-013, pendiente presets Linux/Win)
 
 Comando server ejemplo:
