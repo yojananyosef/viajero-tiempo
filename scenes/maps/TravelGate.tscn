@@ -1,7 +1,9 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/gameplay/travel_gate.gd" id="1"]
 [ext_resource type="PackedScene" path="res://assets_3p/kenney/models/brick.glb" id="2"]
+[ext_resource type="PackedScene" path="res://assets_3p/kenney/models/jewel.glb" id="3"]
+[ext_resource type="PackedScene" path="res://assets_3p/kenney/models/flag.glb" id="4"]
 
 [sub_resource type="SphereShape3D" id="GateAreaShape"]
 radius = 2.0
@@ -20,6 +22,13 @@ transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -1.5, 0.5, 0)
 
 [node name="PillarR" parent="." instance=ExtResource("2")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 1.5, 0.5, 0)
+
+[node name="Seal" parent="." instance=ExtResource("3")]
+; SPEC-A1: joya-sello flotante, solo visual. travel_gate.gd solo toca GateLabel/GateArea.
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 2.4, 0)
+
+[node name="Banner" parent="." instance=ExtResource("4")]
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, -2.2, 0.5, 0)
 
 [node name="GateLabel" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)

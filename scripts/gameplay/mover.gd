@@ -45,7 +45,7 @@ var _save: Node = null
 var _skill_cd: float = 0.0
 var _skill2_cd: float = 0.0
 
-@onready var _visual: MeshInstance3D = $Visual
+@onready var _visual: Node3D = $Visual
 @onready var _rig: SpringArm3D = $CameraRig
 @onready var _staff: Node3D = $Staff
 
@@ -94,14 +94,26 @@ func _apply_class_stats(cid: String) -> void:
 
 
 func _tint_visual(c) -> void:
+	# SPEC-A1: Visual es contenedor Node3D con modelo Kenney dentro.
+	# El tinte de senda se aplica a los MeshInstance3D descendientes.
 	if not is_instance_valid(_visual):
 		return
+	var col: Color = c if c is Color else Color(0.98, 0.78, 0.42)
+	if _visual is MeshInstance3D:
+		var m0 := StandardMaterial3D.new()
+		m0.albedo_color = col
+		m0.roughness = 0.6
+		m0.emission_enabled = true
+		m0.emission = Color(0.45, 0.32, 0.12)
+		(_visual as MeshInstance3D).material_override = m0
+		return
 	var m := StandardMaterial3D.new()
-	m.albedo_color = c if c is Color else Color(0.98, 0.78, 0.42)
+	m.albedo_color = col
 	m.roughness = 0.6
 	m.emission_enabled = true
 	m.emission = Color(0.45, 0.32, 0.12)
-	_visual.material_override = m
+	for ch in _visual.find_children("*", "MeshInstance3D", true, false):
+		(ch as MeshInstance3D).material_override = m
 
 
 ## SPEC-006 — Daño solo válido en solo/servidor. El cliente no se daña solo.

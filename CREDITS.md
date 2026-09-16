@@ -7,18 +7,26 @@ Fuente: https://kenney.nl/assets — licencia CC0 por pack.
 - [ ] Fantasy Town Kit — base campamento patriarcal / Babel (pendiente descarga)
 - [x] Mini Characters — base viajero/mobs cute (descargado 2026-09-14, CC0).
   Usado en SPEC-004 Q01: `assets_3p/kenney/models/character-male-a.glb` (Guía Enoc).
+  SPEC-A1: `character-male-b.glb` (Traveler jugador, contenedor Visual en Traveler.tscn).
   Zips fuente (no commiteados,Ignored por .gitignore): re-descargables desde URLs arriba.
 - [ ] Blocky Characters — variantes (pendiente)
 - [x] Nature Kit / Mini Forest — Edén, Canaán, Ararat (Mini Forest descargado 2026-09-14, CC0).
   Usados en SPEC-005 Q02: `tree.glb`, `tree-high.glb`, `forest-plant.glb` (renombrado
   desde plant.glb), `patch-grass.glb`, `rocks-low.glb`, `fence.glb`, `bridge.glb`,
   más `flowers.glb` y `grass.glb` del Platformer Kit.
+  SPEC-A1 (Map_01 hub + base global): `flag.glb`, `stones.glb`, `tent.glb`,
+  `patch-dirt.glb` (campamento/tutorial, breakup suelo atemporal).
   Fauna del Edén: modelos propios placeholder (cápsula+esfera cute, sin licencia
   tercera; el Animal Pack de Kenney es 2D y no sirve).
 - [ ] Modular Dungeon / Cave Kit — Arca interior, Sinaí, Babel interior (pendiente)
 - [x] Platformer Kit — islas fragmentadas por anomalías (descargado 2026-09-14, CC0).
   Usados en SPEC-004 Q01: `assets_3p/kenney/models/platform.glb` (dais del portal),
   `brick.glb` (pilares), `jewel.glb` (sello flotante).
+  SPEC-A1 (hub + base global): `chest.glb` (cofre Map_01), `star.glb`
+  (GuideStar Map_01 + Companion Echo), `coin-gold.glb` (monedas Map_01),
+  `jewel.glb` (Seal TravelGate), `brick.glb` (pilares TravelGate/Portal),
+  `platform.glb` (dais Portal + TravelMount), `flag.glb` (banderas Map_01,
+  Banner TravelGate, Pennant TravelMount — doble fuente: también en Mini Forest).
 
 ## itch.io free/tag-godot (verificar cada pack: CC0 o CC-BY)
 Fuente: https://itch.io/game-assets/free/tag-godot

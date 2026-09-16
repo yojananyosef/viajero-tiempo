@@ -1,20 +1,10 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/gameplay/mover.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/gameplay/follow_camera.gd" id="2"]
+[ext_resource type="PackedScene" path="res://assets_3p/kenney/models/character-male-b.glb" id="3"]
 
 [sub_resource type="CapsuleShape3D" id="CapShape"]
-radius = 0.4
-height = 1.7
-
-[sub_resource type="StandardMaterial3D" id="TunicMat"]
-albedo_color = Color(0.98, 0.78, 0.42, 1)
-roughness = 0.6
-emission_enabled = true
-emission = Color(0.45, 0.32, 0.12, 1)
-
-[sub_resource type="CapsuleMesh" id="CapMesh"]
-material = SubResource("TunicMat")
 radius = 0.4
 height = 1.7
 
@@ -48,9 +38,13 @@ script = ExtResource("1")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapShape")
 
-[node name="Visual" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
-mesh = SubResource("CapMesh")
+[node name="Visual" type="Node3D" parent="."]
+; SPEC-A1: contenedor visual (modelo Kenney). No renombrar: replicado por
+; mover.gd (Visual:rotation) y rotado por código para no arrastrar la cámara.
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Model" parent="Visual" instance=ExtResource("3")]
+transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, 0, 0, 0)
 
 [node name="Staff" type="Node3D" parent="."]
 visible = false
