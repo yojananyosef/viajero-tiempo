@@ -4,7 +4,13 @@ Regla: ningún asset entra a `assets_3p/` sin fila aquí.
 
 ## Kenney (CC0 — dominio público, sin atribución requerida)
 Fuente: https://kenney.nl/assets — licencia CC0 por pack.
-- [ ] Fantasy Town Kit — base campamento patriarcal / Babel (pendiente descarga)
+- [x] Fantasy Town Kit — base campamento patriarcal / Babel (descargado 2026-09-16, CC0).
+  Zip fuente (no commiteado, ignored por .gitignore): `kenney_fantasy-town-kit_2.0.zip`
+  (167 .glb: edificios, muros, banners, fuentes, caminos). Pendiente extracción a
+  `models/` según mapa (Babel Map_10, campamentos).
+- [x] Blocky Characters — variantes (descargado 2026-09-16, CC0).
+  Zip fuente: `kenney_blocky-characters_20.zip` (18 .glb: character-a…r, con
+  animación). Reserva para variantes de mobs/npcs sin romper Mini Characters.
 - [x] Mini Characters — base viajero/mobs cute (descargado 2026-09-14, CC0).
   Usado en SPEC-004 Q01: `assets_3p/kenney/models/character-male-a.glb` (Guía Enoc).
   SPEC-A1: `character-male-b.glb` (Traveler jugador, contenedor Visual en Traveler.tscn).
@@ -18,7 +24,10 @@ Fuente: https://kenney.nl/assets — licencia CC0 por pack.
   `patch-dirt.glb` (campamento/tutorial, breakup suelo atemporal).
   Fauna del Edén: modelos propios placeholder (cápsula+esfera cute, sin licencia
   tercera; el Animal Pack de Kenney es 2D y no sirve).
-- [ ] Modular Dungeon / Cave Kit — Arca interior, Sinaí, Babel interior (pendiente)
+- [x] Modular Dungeon Kit — Arca interior, Sinaí, Babel interior (descargado 2026-09-16, CC0).
+  Zip fuente: `kenney_modular-dungeon-kit_1.0.zip` (39 .glb: corridors, rooms,
+  stairs, gates). Pendiente extracción a `models/` según mapa (Map_07 Arca,
+  Sinaí, Babel interior). Cave Kit separado: no descargado (solo si hace falta).
 - [x] Platformer Kit — islas fragmentadas por anomalías (descargado 2026-09-14, CC0).
   Usados en SPEC-004 Q01: `assets_3p/kenney/models/platform.glb` (dais del portal),
   `brick.glb` (pilares), `jewel.glb` (sello flotante).

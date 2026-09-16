@@ -8,6 +8,12 @@
 [ext_resource type="PackedScene" path="res://scenes/npc/Altar.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://scenes/maps/TravelGate.tscn" id="7"]
 [ext_resource type="Script" path="res://scripts/gameplay/combat_pool.gd" id="8"]
+[ext_resource type="PackedScene" path="res://assets_3p/kenney/models/tent.glb" id="9"]
+[ext_resource type="PackedScene" path="res://assets_3p/kenney/models/flag.glb" id="10"]
+[ext_resource type="PackedScene" path="res://assets_3p/kenney/models/stones.glb" id="11"]
+[ext_resource type="PackedScene" path="res://assets_3p/kenney/models/patch-dirt.glb" id="12"]
+[ext_resource type="PackedScene" path="res://assets_3p/kenney/models/chest.glb" id="13"]
+[ext_resource type="PackedScene" path="res://assets_3p/kenney/models/jewel.glb" id="14"]
 
 [sub_resource type="ProceduralSkyMaterial" id="DawnSkyMat"]
 sky_top_color = Color(0.3, 0.5, 0.85, 1)
@@ -36,13 +42,6 @@ size = Vector2(60, 60)
 [sub_resource type="BoxShape3D" id="GroundShape"]
 size = Vector3(60, 1, 60)
 
-[sub_resource type="StandardMaterial3D" id="TentMat"]
-albedo_color = Color(0.7, 0.6, 0.5, 1)
-roughness = 0.9
-
-[sub_resource type="PrismMesh" id="TentMesh"]
-size = Vector3(4.0, 3.0, 4.0)
-
 [node name="Map_04_Redencion" type="Node3D"]
 script = ExtResource("1")
 
@@ -63,15 +62,42 @@ mesh = SubResource("GroundMesh")
 [node name="GroundCol" type="CollisionShape3D" parent="Ground"]
 shape = SubResource("GroundShape")
 
-[node name="Tent" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.5, -6)
-mesh = SubResource("TentMesh")
-material_override = SubResource("TentMat")
+[node name="Tent" parent="." instance=ExtResource("9")]
+; SPEC-A1: tienda Kenney en lugar del prisma placeholder. map_redencion.gd
+; solo toca Banner/ProgressLabel/ClassLabel: Tent/Tent2 sin lógica.
+transform = Transform3D(1.4, 0, 0, 0, 1.4, 0, 0, 0, 1.4, -8, 0.5, -6)
 
-[node name="Tent2" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.5, -6)
-mesh = SubResource("TentMesh")
-material_override = SubResource("TentMat")
+[node name="Tent2" parent="." instance=ExtResource("9")]
+transform = Transform3D(1.4, 0, 0, 0, 1.4, 0, 0, 0, 1.4, 8, 0.5, -6)
+
+; SPEC-A1: campamento de las 3 sendas (amanecer). Solo ADD visual.
+[node name="PathFlagA" parent="." instance=ExtResource("10")]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -4, 0.5, 4)
+
+[node name="PathFlagB" parent="." instance=ExtResource("10")]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0.5, 5)
+
+[node name="PathFlagC" parent="." instance=ExtResource("10")]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 4, 0.5, 4)
+
+[node name="StonesW" parent="." instance=ExtResource("11")]
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, -10, 0.5, 8)
+
+[node name="StonesE" parent="." instance=ExtResource("11")]
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 10, 0.5, -8)
+
+[node name="Dirt1" parent="." instance=ExtResource("12")]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -3, 0.52, 2)
+
+[node name="Dirt2" parent="." instance=ExtResource("12")]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 5, 0.52, -2)
+
+[node name="SupplyChest" parent="." instance=ExtResource("13")]
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, -5.5, 0.5, -4.5)
+
+[node name="Seal2" parent="." instance=ExtResource("14")]
+; Sello 2 flotante sobre el altar, solo visual.
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 2.6, 0)
 
 [node name="SpawnPoint" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 16)
